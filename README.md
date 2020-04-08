@@ -1,2 +1,2 @@
-# che-sidecar-buildah-base
+# che-buildah-base
 Use this image to build docker images using buildah
