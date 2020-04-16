@@ -10,9 +10,12 @@
 
 FROM quay.io/buildah/stable:v1.14.3
 
-ENV KUBECTL_VERSION="v1.17.3" \
-    HELM_VERSION="v3.1.1" \
-    HOME="/home/buildah"
+# ENV KUBECTL_VERSION="v1.17.3" \
+#     HELM_VERSION="v3.1.1" \
+#     HOME="/home/buildah"
+
+ENV HOME="/home/buildah" \
+    XDG_RUNTIME_DIR="/var/tmp/containers/runtime"
 
 ADD etc/storage.conf ${HOME}/.config/containers/storage.conf
 ADD etc/containers.conf ${HOME}/.config/containers/containers.conf
@@ -27,15 +30,15 @@ RUN mkdir /projects && \
     done && \
     # buildah login requires writing to /run
     chgrp -R 0 /run && chmod -R g+rwX /run && \
-    curl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl && \
-    curl -o- -L https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz | tar xvz -C /usr/local/bin --strip 1 && \
-    chmod +x /usr/local/bin/kubectl /usr/local/bin/helm && \
-    # 'which' utility is used by VS Code Kubernetes extension to find the binaries, e.g. 'kubectl'
-    dnf install -y which nodejs && \
     mkdir -p /var/tmp/containers/runtime && \
     chmod -R g+rwX /var/tmp/containers
 
-ENV XDG_RUNTIME_DIR /var/tmp/containers/runtime
+    # curl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl && \
+    # curl -o- -L https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz | tar xvz -C /usr/local/bin --strip 1 && \
+    # chmod +x /usr/local/bin/kubectl /usr/local/bin/helm && \
+
+    # 'which' utility is used by VS Code Kubernetes extension to find the binaries, e.g. 'kubectl'
+    # dnf install -y which nodejs
 
 ADD etc/entrypoint.sh /entrypoint.sh
 
